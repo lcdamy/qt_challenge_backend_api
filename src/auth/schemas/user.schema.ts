@@ -3,6 +3,7 @@ import { IsEmail, Length } from 'class-validator';
 
 @Entity()
 export class User {
+    [x: string]: any;
     @PrimaryGeneratedColumn()
     id: number;
 

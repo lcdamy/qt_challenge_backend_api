@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user-dto';
 import { User } from './schemas/user.schema';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,11 +16,18 @@ export class AuthService {
         @InjectRepository(RefreshToken) private refreshTokenRepository: Repository<RefreshToken>,
         private jwtService: JwtService
     ) { }
+
     async signUp(signupData: CreateUserDto) {
         const emailExists = await this.userRepository.findOne({ where: { email: signupData.email } });
         if (emailExists) {
-            throw new Error('Email already exists');
+            throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
         }
+
+        const usernameExists = await this.userRepository.findOne({ where: { username: signupData.username } });
+        if (usernameExists) {
+            throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
+        }
+
         const hashedPassword = await bcrypt.hash(signupData.password, 10);
         signupData.password = hashedPassword;
 
@@ -50,7 +57,7 @@ export class AuthService {
         };
     }
 
-    async storeRefreshToken(refreshToken: string,userId: string) {
+    async storeRefreshToken(refreshToken: string, userId: string) {
         const token = new RefreshToken();
         token.token = refreshToken;
         token.userId = userId;

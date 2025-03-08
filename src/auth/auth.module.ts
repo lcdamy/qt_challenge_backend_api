@@ -7,13 +7,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshToken } from './schemas/refresh-token.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, RefreshToken]), JwtModule
-    .registerAsync({
-      useFactory: async () => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '1h' },
-      }),
-    })],
+  imports: [
+    TypeOrmModule.forFeature([User, RefreshToken])
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })
