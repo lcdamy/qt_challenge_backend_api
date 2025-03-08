@@ -58,7 +58,7 @@ export class AuthService {
     }
 
     async storeRefreshToken(refreshToken: string, userId: string) {
-        const token = new RefreshToken();
+        const token = await this.refreshTokenRepository.findOne({ where: { userId: userId } }) || new RefreshToken();
         token.token = refreshToken;
         token.userId = userId;
         token.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 3);
