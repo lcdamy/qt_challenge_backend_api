@@ -1,0 +1,20 @@
+import { Module } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './schemas/user.schema';
+import { JwtModule } from '@nestjs/jwt';
+import { RefreshToken } from './schemas/refresh-token.schema';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([User, RefreshToken]), JwtModule
+    .registerAsync({
+      useFactory: async () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: '1h' },
+      }),
+    })],
+  controllers: [AuthController],
+  providers: [AuthService],
+})
+export class AuthModule { }
