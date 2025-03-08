@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, UseGuards, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from './guards/auth.guard';
 import { CreateShortenUrlDto } from './auth/dtos/create-shorten-url-dto';
-
 
 @UseGuards(AuthGuard)
 @Controller()
@@ -19,9 +18,9 @@ export class AppController {
   }
 
   @Get('analytics/:shortUrl')
-  async getAnalytics(@Req() req) {
+  async getAnalytics(@Param('shortUrl') shortUrl: string, @Req() req) {
     try {
-      return await this.appService.getAnalytics(req.params.shortUrl, req.user);
+      return await this.appService.getAnalytics(shortUrl, req.user);
     } catch (error) {
       return { message: error.message };
     }

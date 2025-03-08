@@ -36,12 +36,4 @@ export class AppService {
     return await this.urlRepository.save(url);
   }
 
-  async updateUrlClicks(shortUrl: string, user: User) {
-    const url = await this.urlRepository.findOne({ where: { short_code: shortUrl, user: { id: user.id } } });
-    if (!url) {
-      throw new HttpException('url not found', HttpStatus.NOT_FOUND);
-    }
-    url.clicks += 1;
-    return await this.urlRepository.save(url);
-  }
 }

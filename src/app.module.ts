@@ -8,6 +8,7 @@ import { User } from './auth/schemas/user.schema';
 import { RefreshToken } from './auth/schemas/refresh-token.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { Url } from './auth/schemas/url.schema';
+import { UrlClicksModule } from './url-clicks/url-clicks.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { Url } from './auth/schemas/url.schema';
         signOptions: { expiresIn: '1h' },
       }),
       global: true
-    })],
+    }),
+    UrlClicksModule],
   controllers: [AppController],
   providers: [AppService],
 
