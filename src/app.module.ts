@@ -9,7 +9,9 @@ import { RefreshToken } from './auth/schemas/refresh-token.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { Url } from './auth/schemas/url.schema';
 import { UrlClicksModule } from './url-clicks/url-clicks.module';
-
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CustomLoggerService } from './custom-logger.service';
+import { LoggingInterceptor } from './logging.interceptor';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -26,7 +28,7 @@ import { UrlClicksModule } from './url-clicks/url-clicks.module';
       }),
     }),
     AuthModule,
-    TypeOrmModule.forFeature([User, RefreshToken,Url]),
+    TypeOrmModule.forFeature([User, RefreshToken, Url]),
     JwtModule.registerAsync({
       useFactory: async () => ({
         secret: process.env.JWT_SECRET,
@@ -36,7 +38,11 @@ import { UrlClicksModule } from './url-clicks/url-clicks.module';
     }),
     UrlClicksModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    CustomLoggerService,
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    AppService
+  ],
 
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../auth/dtos/create-user-dto';
 import { LoginUserDto } from './dtos/login-user-dto';
@@ -6,35 +6,49 @@ import { RefreshTokenDto } from './dtos/reflesh-token.dto';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly authService: AuthService) {}
 
   //signup
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
+    this.logger.log('SignUp request received');
     try {
-      return await this.authService.signUp(createUserDto);
+      const result = await this.authService.signUp(createUserDto);
+      this.logger.log('SignUp successful');
+      return result;
     } catch (error) {
-      return { message: error.message };
-    }
-  }
-  //signin
-  @Post('signin')
-  async signIn(@Body() credentials: LoginUserDto) {
-    try {
-      return await this.authService.signIn(credentials);
-    } catch (error) {
-      return { message: error.message };
-    }
-  }
-  //logout
-  //token refres
-  @Post('refresh-token')
-  async refreshToken(@Body() refreshToken: RefreshTokenDto ) {
-    try {
-      return await this.authService.refreshToken(refreshToken);
-    } catch (error) {
+      this.logger.error('SignUp failed', error.stack);
       return { message: error.message };
     }
   }
 
+  //signin
+  @Post('signin')
+  async signIn(@Body() credentials: LoginUserDto) {
+    this.logger.log('SignIn request received');
+    try {
+      const result = await this.authService.signIn(credentials);
+      this.logger.log('SignIn successful');
+      return result;
+    } catch (error) {
+      this.logger.error('SignIn failed', error.stack);
+      return { message: error.message };
+    }
+  }
+
+  //token refresh
+  @Post('refresh-token')
+  async refreshToken(@Body() refreshToken: RefreshTokenDto) {
+    this.logger.log('RefreshToken request received');
+    try {
+      const result = await this.authService.refreshToken(refreshToken);
+      this.logger.log('RefreshToken successful');
+      return result;
+    } catch (error) {
+      this.logger.error('RefreshToken failed', error.stack);
+      return { message: error.message };
+    }
+  }
 }
