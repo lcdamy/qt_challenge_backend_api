@@ -51,4 +51,18 @@ export class AuthController {
       return { message: error.message };
     }
   }
+
+  //logout
+  @Post('logout')
+  async logout(@Body() refreshToken: RefreshTokenDto) {
+    this.logger.log('Logout request received');
+    try {
+      const result = await this.authService.logout(refreshToken);
+      this.logger.log('Logout successful');
+      return result;
+    } catch (error) {
+      this.logger.error('Logout failed', error.stack);
+      return { message: error.message };
+    }
+  }
 }

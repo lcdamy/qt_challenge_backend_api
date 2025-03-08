@@ -101,4 +101,17 @@ export class AuthService {
         this.logger.log(`Token refreshed successfully for user with ID: ${token.userId}`);
         return this.generateToken(user);
     }
+
+    async logout(refreshToken: RefreshTokenDto) {
+        this.logger.log(`Attempting to logout`);
+        const token = await this.refreshTokenRepository.findOne({ where: { token: refreshToken.token } });
+        if (!token) {
+            this.logger.warn(`Invalid refresh token`);
+            throw new UnauthorizedException('Invalid refresh token');
+        }
+        await this.refreshTokenRepository.delete({ token: refreshToken.token });
+        this.logger.log(`Logout successful`);
+        return { message: 'Logout successful' };
+    }
+
 }
