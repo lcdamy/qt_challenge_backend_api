@@ -66,6 +66,7 @@ export class AuthService {
         if (token.expires < new Date()) {
             throw new UnauthorizedException('Refresh token expired');
         }
+        await this.refreshTokenRepository.delete({ token: refreshToken.token });
         const user = await this.userRepository.findOne({ where: { id: Number(token.userId) } });
         if (!user) {
             throw new UnauthorizedException('User not found');
