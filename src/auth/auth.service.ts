@@ -60,7 +60,7 @@ export class AuthService {
 
     async generateToken(user: User) {
         this.logger.log(`Generating token for user with email: ${user.email}`);
-        const payload = { email: user.email, id: user.id };
+        const payload = { email: user.email, id: user.id, name: user.username };
         const refreshToken = uuidv4();
         await this.storeRefreshToken(refreshToken, user.id.toString());
         this.logger.log(`Token generated successfully for user with email: ${user.email}`);
