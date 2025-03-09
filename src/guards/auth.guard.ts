@@ -16,7 +16,12 @@ export class AuthGuard implements CanActivate {
         const authHeader = request.headers.authorization;
         if (!authHeader) {
             this.logger.warn('No token provided');
-            throw new UnauthorizedException('No token provided');
+            throw new UnauthorizedException({
+                success: false,
+                data: null,
+                message: 'No token provided',
+                timestamp: new Date().toISOString(),
+            });
         }
         const token = authHeader.split(' ')[1];
         try {
@@ -25,9 +30,13 @@ export class AuthGuard implements CanActivate {
             this.logger.log('Token verified successfully');
         } catch (error) {
             this.logger.error('Invalid token', error.stack);
-            throw new UnauthorizedException('Invalid token');
+            throw new UnauthorizedException({
+                success: false,
+                data: null,
+                message: 'Invalid token',
+                timestamp: new Date().toISOString(),
+            });
         }
-
         return true;
     }
 }

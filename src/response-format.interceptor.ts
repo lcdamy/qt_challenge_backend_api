@@ -16,7 +16,7 @@ export class ResponseFormatInterceptor implements NestInterceptor {
                 return of({
                     success: false,
                     data: null,
-                    message: err.message || 'An error occurred',
+                    message: err.response?.message || err.message || 'An error occurred',
                     timestamp: new Date().toISOString(),
                 });
             }),
