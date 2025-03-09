@@ -20,7 +20,7 @@ export class AuthController {
       return result;
     } catch (error) {
       this.logger.error('SignUp failed', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 
@@ -34,7 +34,7 @@ export class AuthController {
       return result;
     } catch (error) {
       this.logger.error('SignIn failed', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 
@@ -48,7 +48,7 @@ export class AuthController {
       return result;
     } catch (error) {
       this.logger.error('RefreshToken failed', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 
@@ -62,7 +62,7 @@ export class AuthController {
       return result;
     } catch (error) {
       this.logger.error('Logout failed', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 }

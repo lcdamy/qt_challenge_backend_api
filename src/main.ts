@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ResponseFormatInterceptor } from './response-format.interceptor';
 
 
 async function bootstrap() {
@@ -11,7 +12,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }
   ));
-
+  app.useGlobalInterceptors(new ResponseFormatInterceptor());
 
   app.enableCors({
     origin: 'http://localhost:3000',

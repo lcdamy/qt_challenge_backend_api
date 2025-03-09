@@ -17,7 +17,7 @@ export class AppController {
       return await this.appService.getLinks(req.user);
     } catch (error) {
       this.logger.error('Error fetching links', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 
@@ -28,7 +28,7 @@ export class AppController {
       return await this.appService.getAnalytics(shortUrl, req.user);
     } catch (error) {
       this.logger.error(`Error fetching analytics for shortUrl: ${shortUrl}`, error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 
@@ -39,7 +39,7 @@ export class AppController {
       return this.appService.shortenUrl(createShortenUrlDto, req.user);
     } catch (error) {
       this.logger.error('Error shortening URL', error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 }

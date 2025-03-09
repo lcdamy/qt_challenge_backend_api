@@ -16,7 +16,7 @@ export class UrlClicksController {
       return result;
     } catch (error) {
       this.logger.error(`Failed to update clicks for URL: ${shortUrl}`, error.stack);
-      return { message: error.message };
+      throw error;
     }
   }
 }
