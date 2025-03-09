@@ -22,4 +22,15 @@ export class UrlClicksService {
         this.logger.log(`URL with short code ${shortUrl} has been clicked ${url.clicks} times`);
         return await this.urlRepository.save(url);
     }
+
+    async redirectUserToOriginalLink(shortUrl: string) {
+        this.logger.log(`Redirecting user to original URL`);
+        const url = await this.urlRepository.findOne({ where: { short_code: shortUrl } });
+        if (!url) {
+            this.logger.warn(`URL with short code ${shortUrl} not found`);
+            throw new HttpException('url not found', HttpStatus.NOT_FOUND);
+        }
+        this.logger.log(`Redirecting user to original URL: ${url.long_url}`);
+        return url.long_url;
+    }
 }
