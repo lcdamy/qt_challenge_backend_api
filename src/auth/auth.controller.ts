@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../auth/dtos/create-user-dto';
 import { LoginUserDto } from './dtos/login-user-dto';
 import { RefreshTokenDto } from './dtos/reflesh-token.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -12,6 +13,9 @@ export class AuthController {
 
   //signup
   @Post('signup')
+  @ApiOperation({ summary: 'Sign up' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async signUp(@Body() createUserDto: CreateUserDto) {
     this.logger.log('SignUp request received');
     try {
@@ -26,6 +30,9 @@ export class AuthController {
 
   //signin
   @Post('signin')
+  @ApiOperation({ summary: 'Sign in' })
+  @ApiResponse({ status: 200, description: 'User signed in successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async signIn(@Body() credentials: LoginUserDto) {
     this.logger.log('SignIn request received');
     try {
@@ -40,6 +47,9 @@ export class AuthController {
 
   //token refresh
   @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh' })
+  @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async refreshToken(@Body() refreshToken: RefreshTokenDto) {
     this.logger.log('RefreshToken request received');
     try {
@@ -54,6 +64,9 @@ export class AuthController {
 
   //logout
   @Post('logout')
+  @ApiOperation({ summary: 'Logout' })
+  @ApiResponse({ status: 200, description: 'User logged out successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async logout(@Body() refreshToken: RefreshTokenDto) {
     this.logger.log('Logout request received');
     try {
