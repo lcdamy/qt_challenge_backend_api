@@ -4,6 +4,7 @@ import { CreateUserDto } from '../auth/dtos/create-user-dto';
 import { LoginUserDto } from './dtos/login-user-dto';
 import { RefreshTokenDto } from './dtos/reflesh-token.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { GetRefreshTokenDto } from './dtos/get-reflesh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -78,4 +79,22 @@ export class AuthController {
       throw error;
     }
   }
+
+//get refresh token
+  @Post('get-refresh-token')
+  @ApiOperation({ summary: 'Get refresh' })
+  @ApiResponse({ status: 200, description: 'Refresh token' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async getRefreshToken(@Body() getRefreshTokenDto: GetRefreshTokenDto) {
+    this.logger.log('GetRefreshToken request received');
+    try {
+      const result = await this.authService.getRefreshToken(getRefreshTokenDto);
+      this.logger.log('GetRefreshToken successful');
+      return result;
+    } catch (error) {
+      this.logger.error('GetRefreshToken failed', error.stack);
+      throw error;
+    }
+  }
+
 }

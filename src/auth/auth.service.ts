@@ -114,4 +114,20 @@ export class AuthService {
         return { message: 'Logout successful' };
     }
 
+    async getRefreshToken(getRefreshTokenDto: { email: string }) {
+        this.logger.log(`Attempting to get refresh token for user with email: ${getRefreshTokenDto.email}`);
+        const user = await this.userRepository.findOne({ where: { email: getRefreshTokenDto.email } });
+        if (!user) {
+            this.logger.warn(`User not found with email: ${getRefreshTokenDto.email}`);
+            throw new UnauthorizedException('User not found');
+        }
+        const token = await this.refreshTokenRepository.findOne({ where: { userId: user.id.toString() } });
+        if (!token) {
+            this.logger.warn(`Refresh token not found for user with email: ${getRefreshTokenDto.email}`);
+            throw new UnauthorizedException('Refresh token not found');
+        }
+        this.logger.log(`Refresh token retrieved successfully for user with email: ${getRefreshTokenDto.email}`);
+        return { token: token.token };
+    }
+
 }
