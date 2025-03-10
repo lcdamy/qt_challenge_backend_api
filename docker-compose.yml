@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  backend:
+    image: lcdamy/qt-challenge-backend-api:1.0
+    platform: linux/x86_64
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+    environment:
+      - PORT=3001
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=lcdamy
+      - DB_PASSWORD=Zudanga@1
+      - DB_NAME=qt_challenge
+      - JWT_SECRET=secret
+      - JWT_SECRET_REFRESH=secret_refresh
+      - FRONTEND_URL=http://localhost:3000
+    networks:
+      - qt_network
+
+  mysql:
+    image: mysql:latest
+    platform: linux/x86_64
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=Zudanga@1
+      - MYSQL_DATABASE=qt_challenge
+      - MYSQL_USER=lcdamy
+      - MYSQL_PASSWORD=Zudanga@1
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - qt_network
+
+  frontend:
+    image: lcdamy/qt-challenge-frontend:1.0
+    platform: linux/x86_64
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - qt_network
+
+volumes:
+  mysql_data:
+
+networks:
+  qt_network:
