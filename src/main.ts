@@ -15,7 +15,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseFormatInterceptor());
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://qt-challenge-frontend.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
