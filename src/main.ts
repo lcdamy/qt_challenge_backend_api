@@ -14,11 +14,11 @@ async function bootstrap() {
   ));
   app.useGlobalInterceptors(new ResponseFormatInterceptor());
 
-  // app.enableCors({
-  //   origin: '*',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  //   credentials: true,
-  // });
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   
   setupSwagger(app);
   await app.listen(process.env.PORT ?? 3000);
