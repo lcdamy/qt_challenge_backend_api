@@ -24,5 +24,4 @@ export class Url {
 
     @CreateDateColumn()
     createdAt: Date;
-
 }
