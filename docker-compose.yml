@@ -46,10 +46,6 @@ services:
     depends_on:
       - backend
     environment:
-      - GOOGLE_CLIENT_ID=120025142035-boltjjackct3861jnaikoeilpbbbfaua.apps.googleusercontent.com
-      - GOOGLE_CLIENT_SECRET=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
-      - GITHUB_CLIENT_ID=Ov23liAotIvfUnVtlLh9
-      - GITHUB_CLIENT_SECRET=d2a8b0e315bdbf49b5a87fbc7532f506fa51d058
       - NEXTAUTH_SECRET=secret
       - NEXTAUTH_URL=http://localhost:3001
       - NEXT_PUBLIC_API_URL=http://localhost:3002
