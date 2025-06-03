@@ -15,10 +15,19 @@ export class AppController {
   @ApiOperation({ summary: 'Get all URLs' })
   @ApiResponse({ status: 200, description: 'URLs fetched successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async getLinks(@Req() req) {
-    this.logger.log('Fetching links for user');
+  async getLinks(
+    @Req() req,
+    @Param() params,
+  ) {
+    const { page = 1, limit = 10, search = '', ...filters } = req.query;
+    this.logger.log(`Fetching links for user with page=${page}, limit=${limit}, search=${search}, filters=${JSON.stringify(filters)}`);
     try {
-      return await this.appService.getLinks(req.user);
+      return await this.appService.getLinks(req.user, {
+        page: Number(page),
+        limit: Number(limit),
+        search: search as string,
+        filters,
+      });
     } catch (error) {
       this.logger.error('Error fetching links', error.stack);
       throw error;

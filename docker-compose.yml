@@ -1,21 +1,23 @@
 services:
   backend:
-    image: lcdamy/qt-challenge-backend-api:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     platform: linux/x86_64
     ports:
-      - "3001:3001"
+      - "3002:3002"
     depends_on:
       - mysql
     environment:
-      - PORT=3001
+      - PORT=3002
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=lcdamy
       - DB_PASSWORD=Zudanga@1
-      - DB_NAME=qt_challenge
+      - DB_NAME=qt_challenge_3
       - JWT_SECRET=secret
       - JWT_SECRET_REFRESH=secret_refresh
-      - FRONTEND_URL=http://localhost:3000
+      - FRONTEND_URL=http://localhost:3001
     networks:
       - qt_network
 
@@ -26,7 +28,7 @@ services:
       - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=Zudanga@1
-      - MYSQL_DATABASE=qt_challenge
+      - MYSQL_DATABASE=qt_challenge_3
       - MYSQL_USER=lcdamy
       - MYSQL_PASSWORD=Zudanga@1
     volumes:
@@ -35,12 +37,24 @@ services:
       - qt_network
 
   frontend:
-    image: lcdamy/qt-challenge-frontend:1.0
+    build:
+      context: ../qt_challenge_frontend
+      dockerfile: Dockerfile
     platform: linux/x86_64
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       - backend
+    environment:
+      - GOOGLE_CLIENT_ID=120025142035-boltjjackct3861jnaikoeilpbbbfaua.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - GITHUB_CLIENT_ID=Ov23liAotIvfUnVtlLh9
+      - GITHUB_CLIENT_SECRET=d2a8b0e315bdbf49b5a87fbc7532f506fa51d058
+      - NEXTAUTH_SECRET=secret
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3002
+      - NEXT_PUBLIC_FRONTEND_URL=http://localhost:3001
+      - NEXT_PUBLIC_DEFAULT_PASSWORD=123456789
     networks:
       - qt_network
 

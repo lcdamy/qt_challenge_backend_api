@@ -14,9 +14,30 @@ export class AppService {
     @InjectRepository(Url) private urlRepository: Repository<Url>,
   ) { }
 
-  async getLinks(user: User) {
+  async getLinks(user: User, options?: { page?: number; limit?: number; search?: string; filters?: any }) {
     this.logger.log(`Fetching links for user with id: ${user.id}`);
-    return await this.urlRepository.find({ where: { user: { id: user.id } } });
+    const { page = 1, limit = 10, search = '', filters = {} } = options || {};
+    const query = this.urlRepository.createQueryBuilder('url')
+      .where('url.user_id = :userId', { userId: user.id })
+      .andWhere('url.long_url LIKE :search', { search: `%${search}%` })
+      .skip((page - 1) * limit)
+      .take(limit);
+    this.logger.log(`Querying URLs with page=${page}, limit=${limit}, search=${search}, filters=${JSON.stringify(filters)}`);
+    // Apply additional filters if provided
+    Object.keys(filters).forEach(key => {
+      query.andWhere(`url.${key} = :${key}`, { [key]: filters[key] });
+    });
+    const urls = await query.getMany();
+    this.logger.log(`Fetched ${urls.length} URLs for user id: ${user.id}`);
+    const total = await query.getCount();
+    return {
+      urls,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
+
+    //  return await this.urlRepository.find({ where: { user: { id: user.id } } });
   }
 
   async getAnalytics(shortUrl: string, user: User) {

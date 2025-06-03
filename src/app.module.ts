@@ -36,8 +36,11 @@ import { LoggingInterceptor } from './logging.interceptor';
       }),
       global: true
     }),
-    UrlClicksModule],
-  controllers: [AppController],
+    UrlClicksModule
+  ],
+  controllers: [
+    AppController
+  ],
   providers: [
     CustomLoggerService,
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },

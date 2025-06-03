@@ -32,12 +32,16 @@ export class AuthService {
             this.logger.warn(`Username already exists: ${signupData.username}`);
             throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
         }
-
+        console.log("--------------------->", signupData.password, "<---------------------");
         const hashedPassword = await bcrypt.hash(signupData.password, 10);
         signupData.password = hashedPassword;
 
         const user = await this.userRepository.save(signupData);
         this.logger.log(`User signed up successfully with email: ${signupData.email}`);
+        //save a refresh token for the user
+        const refreshToken = uuidv4();
+        await this.storeRefreshToken(refreshToken, user.id.toString());
+        this.logger.log(`Refresh token generated and stored for user with email: ${signupData.email}`);
         return user;
     }
 
@@ -75,7 +79,7 @@ export class AuthService {
         const token = await this.refreshTokenRepository.findOne({ where: { userId: userId } }) || new RefreshToken();
         token.token = refreshToken;
         token.userId = userId;
-        token.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 3);
+        token.expires = new Date(Date.now() + 1000 * 60 * 60 * 1);
         const savedToken = await this.refreshTokenRepository.save(token);
         this.logger.log(`Refresh token stored successfully for user with ID: ${userId}`);
         return savedToken;

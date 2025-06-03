@@ -14,9 +14,9 @@ export class Url {
     @Column({ unique: true })
     short_code: string;
 
-    @Column({ unique: true })
-    @Length(10, 2048)
+    @Column({ type: 'text' })
     @IsUrl()
+    @Length(1, 2048)
     long_url: string;
 
     @Column({ default: 0 })
