@@ -14,7 +14,7 @@ services:
       - DB_PORT=3306
       - DB_USER=lcdamy
       - DB_PASSWORD=Zudanga@1
-      - DB_NAME=qt_challenge_3
+      - DB_NAME=qt_challenge
       - JWT_SECRET=secret
       - JWT_SECRET_REFRESH=secret_refresh
       - FRONTEND_URL=http://localhost:3001
@@ -28,7 +28,7 @@ services:
       - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=Zudanga@1
-      - MYSQL_DATABASE=qt_challenge_3
+      - MYSQL_DATABASE=qt_challenge
       - MYSQL_USER=lcdamy
       - MYSQL_PASSWORD=Zudanga@1
     volumes:

@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenDto } from './dtos/reflesh-token.dto';
+import { sign } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,26 @@ export class AuthService {
 
     async signUp(signupData: CreateUserDto) {
         this.logger.log(`Attempting to sign up user with email: ${signupData.email}`);
+        //if it is a social signup, we don't need to check anything we signing up the user if he/she is not already signed up
+        if (signupData.signupWithSocial) {
+            this.logger.log(`Social signup detected for email: ${signupData.email}`);
+            //remove the signupWithSocial field from the signupData object
+            delete signupData.signupWithSocial;
+            //check if the user already exists
+            const existingUser = await this.userRepository.findOne({ where: { email: signupData.email } });
+            if (existingUser) {
+                return { mode: "silent" }; // If user already exists, return the existing user
+            }
+            signupData.password = '123456789'; // Set a default password for social signups
+            signupData.password = await bcrypt.hash(signupData.password, 10); // Hash the default password
+            const user = await this.userRepository.save(signupData);
+            this.logger.log(`User signed up successfully with email: ${signupData.email}`);
+            //save a refresh token for the user
+            const refreshToken = uuidv4();
+            await this.storeRefreshToken(refreshToken, user.id.toString());
+            this.logger.log(`Refresh token generated and stored for user with email: ${signupData.email}`);
+            return user;
+        }
         const emailExists = await this.userRepository.findOne({ where: { email: signupData.email } });
         if (emailExists) {
             this.logger.warn(`Email already exists: ${signupData.email}`);
@@ -32,10 +53,10 @@ export class AuthService {
             this.logger.warn(`Username already exists: ${signupData.username}`);
             throw new HttpException('Username already exists', HttpStatus.BAD_REQUEST);
         }
-        console.log("--------------------->", signupData.password, "<---------------------");
         const hashedPassword = await bcrypt.hash(signupData.password, 10);
         signupData.password = hashedPassword;
-
+        //remove the signupWithSocial field from the signupData object
+        delete signupData.signupWithSocial;
         const user = await this.userRepository.save(signupData);
         this.logger.log(`User signed up successfully with email: ${signupData.email}`);
         //save a refresh token for the user
@@ -92,10 +113,10 @@ export class AuthService {
             this.logger.warn(`Invalid refresh token`);
             throw new UnauthorizedException('Invalid refresh token');
         }
-        if (token.expires < new Date()) {
-            this.logger.warn(`Refresh token expired`);
-            throw new UnauthorizedException('Refresh token expired');
-        }
+        // if (token.expires < new Date()) {
+        //     this.logger.warn(`Refresh token expired`);
+        //     throw new UnauthorizedException('Refresh token expired');
+        // }
         await this.refreshTokenRepository.delete({ token: refreshToken.token });
         const user = await this.userRepository.findOne({ where: { id: Number(token.userId) } });
         if (!user) {
